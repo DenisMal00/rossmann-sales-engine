@@ -1,0 +1,32 @@
+services:
+  # DATABASE (Postgres)
+  db:
+    image: postgres:15
+    container_name: rossmann_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: rossmann_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: always
+
+  # APP (Python)
+  app:
+    build: .
+    container_name: rossmann_app
+    command: tail -f /dev/null
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: postgresql://admin:admin@db:5432/rossmann_db
+    ports:
+      - "8501:8501"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
