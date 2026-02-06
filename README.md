@@ -1,7 +1,7 @@
 # Rossmann Strategic Dashboard
 ## Scalable Sales Forecasting & Strategy Simulator
 
-> **Quick Start:** Skip to [Installation & Setup](#-installation--setup) at the bottom.
+> **Quick Start:** Skip to [Installation & Setup](#-installation--setup).
 
 **Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.63% MAPE** on unseen data and simulate strategic scenarios in real-time.
 
@@ -56,4 +56,5 @@ To run the entire ecosystem (PostgreSQL Database + Streamlit Dashboard) locally,
 ```bash
 git clone https://github.com/DenisMal00/rossmann-forecast.git
 cd rossmann-forecast
+
 
