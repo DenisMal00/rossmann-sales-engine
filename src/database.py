@@ -60,3 +60,23 @@ def get_training_data():
 
     # Remove the first 7 days of each store (where rolling_avg_7 is NaN)
     return df.dropna()
+
+def get_store_chart_data(store_id, limit):
+    """
+    Fetches basic history for the UI chart.
+    """
+    engine = get_connection()
+    query = f"SELECT date, sales FROM sales WHERE store_id={store_id} ORDER BY date DESC LIMIT {limit}"
+    return pd.read_sql(query, engine).sort_values('date')
+
+def get_store_model_context(store_id, limit=50):
+    """
+    Fetches rich context (sales + store metadata) for model inference.
+    """
+    engine = get_connection()
+    query = f"""
+        SELECT s.*, st.store_type, st.assortment, st.competition_distance, st.promo2 
+        FROM sales s JOIN store st ON s.store_id = st.store_id 
+        WHERE s.store_id = {store_id} ORDER BY date DESC LIMIT {limit}
+    """
+    return pd.read_sql(query, engine).sort_values('date')
