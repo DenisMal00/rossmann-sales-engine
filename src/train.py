@@ -43,7 +43,7 @@ def train_global_model():
     #SCALER
     scaler_path = os.path.join(MODELS_DIR, 'scaler.joblib')
     joblib.dump(scaler, scaler_path)
-    print(f"✅ Scaler saved correctly to {scaler_path}")
+    print(f"Scaler saved correctly to {scaler_path}")
 
     # Date split points
     val_date = '2015-04-01'
@@ -103,7 +103,7 @@ def train_global_model():
     )
 
     model.save(os.path.join(MODELS_DIR, 'sales_model.keras'))
-    print("🚀 Model saved successfully.")
+    print("Model saved successfully.")
 
 
 if __name__ == "__main__":

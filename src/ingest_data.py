@@ -24,7 +24,7 @@ def main():
     store_df.to_sql('store', engine, if_exists='append', index=False)
 
     # 2. Handle historical sales data
-    print("Reading train.csv (this is a large file)...")
+    print("Reading train.csv...")
     sales_df = pd.read_csv('data/train.csv', low_memory=False)
 
     # Map CSV headers to database columns
