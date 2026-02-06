@@ -18,33 +18,102 @@ The core of this project is built to handle significant data complexity:
 ---
 
 ## Dashboard Overview
-The interface is structured into focused modules for immediate operational clarity:
+The interface is designed for immediate operational clarity, splitting global controls from interactive data visualization.
 
-### 🔍 Store Profiler & Metadata
-The system performs real-time queries to identify the store's context.
-* **Automatic Categorization**: Displays Store Type (Standard, Extra, Compact, Extended) and Assortment levels.
-* **Competitive Landscape**: Shows the distance to the nearest competitor, a key factor used by the AI to weigh sales elasticity.
-* **Helpful Context**: A specialized tooltip provides definitions of store archetypes for quick reference.
+![Dashboard Main](assets/dashboard_main.png)
 
-### 🎮 Strategy Simulator (What-If Analysis)
-The heart of the dashboard is the ability to test scenarios through simulation.
-* **Promo Toggle**: Inject promotional flags into the 7-day forecast window with a single click.
-* **Dual Inference**: The engine generates two parallel scenarios: the **Baseline** (Business as Usual) and the **Strategic Scenario** (with active promotion).
+### 1. Sidebar: The Control Center 
+The sidebar acts as the central hub for configuring the analysis context:
 
-### 📈 Predictive Visualization
-An interactive **Altair-based** chart provides a clear view of time continuity:
-* **History-to-Forecast Bridge**: A visual demarcation separates historical data from future AI projections.
-* **Granular Inspection**: Hover states allow for detailed checks of forecasted values for every single day.
+* **Selection & History**: Users can select a specific **Store ID** (out of 1,115) and define the **History Window** (from 7 to 90 days) to adjust the look-back period for the chart.
+* **Store Profile (Dynamic Metadata)**: Performs a real-time database query to retrieve and display the selected store's specific characteristics—including **Store Type**, **Assortment level**, and **Competition Distance**—complemented by an integrated "Help" icon for instant business definitions of store archetypes.
+* **Strategy Toggle**: A dedicated switch to activate the **Promo Week** scenario, preparing the model for a strategic simulation.
 
-### 📊 Performance Analytics
-Raw data is translated into simple, high-level KPIs:
-* **Projected Performance (WoW)**: A direct indicator comparing the 7-day forecast against the **previous 7 days of actual history**.
-* **Net Strategic Impact**: When a promo is active, the system isolates the estimated incremental revenue attributable to the strategy.
+### 2. Main Interface: Interactive Analytics
+The main panel focuses on visualizing sales trends through an interactive engine:
+
+* **Interactive Altair Chart**: The primary visualization supports **zooming** and **panning**, allowing for both high-level trend analysis and granular inspection of specific date ranges.
+* **Data Export & Tools**: Each chart and table comes with built-in utility features, allowing users to **download data as CSV** or save the visualization as a PNG/SVG for external reporting.
+* **Simulation Trigger**: The "Run Simulation" button initiates the dual-path inference engine, merging historical data with real-time AI projections.
+
+## Strategic Simulation: Promo ON
+When the "Promo Week" is activated, the dashboard transforms into a strategic evaluation tool. The system calculates the incremental value by running two parallel AI inferences: a **Standard Baseline** (no promo) and a **Strategic Scenario** (promo active).
+
+![Forecast Chart](assets/forecast_chart.png)
+![Metrics Breakdown](assets/metrics_breakdown.png)
+
+### 1. Visualizing the Future
+The primary chart reflects the AI's prediction by adding a distinct **red area** to the timeline. This color-coded zone visually separates future projections from historical ground-truth data, allowing for an immediate understanding of the expected sales trajectory.
+
+### 2. Projected Performance
+This module provides a reality check by comparing the upcoming 7-day forecast against the store's most recent performance:
+* **Total Forecasted Revenue**: Displays the aggregate sales expected for the next 7 days.
+* **Week-over-Week (WoW) Trend**: Automatically calculates the percentage variance against the previous 7 days of history, using red or green indicators to signal whether the upcoming period is trending above or below recent performance.
+
+### 3. Strategic Impact Analysis
+This section shows how a promotion changes the forecast by comparing a **Standard Prediction** (no promo) against a **Promo Prediction**:
+
+* **Scenario Totals**: Displays the total revenue for both cases side-by-side to show the difference.
+* **Net Gain**: Calculates the total "extra" sales generated specifically by the promotion.
+* **Daily Delta**: A table showing the day-by-day difference between the two forecasts, highlighting exactly when the strategy is most effective.
+  
+---
+
+## Engineering & Design Choices
+
+The project is architected to handle industrial-scale data by separating the data layer, the deep learning engine, and the user interface.
+
+### 1. Hybrid AI Architecture
+The forecasting engine uses a multi-input Deep Learning model designed to capture both time-series trends and static store attributes:
+* **Recursive LSTM Branch**: Processes a 7-day sliding window of 11 features (Sales, Promos, Holidays, etc.) to learn temporal dependencies.
+* **Entity Embeddings**: A specialized branch that maps 1,115 unique Store IDs into a continuous vector space, allowing the model to learn hidden similarities between different store locations.
+* **Target Transformation**: Sales data is processed using a **Log Transformation** ($\log(1+x)$) to normalize variance and improve model stability.
+
+### 2. Data Engineering & MLOps
+The system is built for reproducibility and efficiency:
+* **SQL-Side Preprocessing**: Critical features like the **7-day rolling average** are calculated directly within PostgreSQL using **Window Functions**, drastically reducing the memory footprint on the application side.
+* **Inference Strategy**: The dashboard performs **Recursive Multi-Step Forecasting**, where each day's prediction is used as an input feature for the next day, ensuring continuity throughout the 7-day window.
+
+### 3. Containerized Ecosystem
+The entire solution is orchestrated via **Docker**, ensuring that the environment is consistent across development and production:
+* **Database Container (`db`)**: A PostgreSQL instance that persists over 1.1 million records and provides high-speed data retrieval.
+* **Application Container (`app`)**: A Python-based environment hosting the Streamlit dashboard and the TensorFlow inference engine.
+* **Network Isolation**: Both containers communicate over a private bridge, keeping the database secure and inaccessible from outside the local network.
 
 ---
 
-## 🛠 Engineering & Design Choices
-*[Section in progress: Awaiting technical code for Train/Evaluate modules]*
+## Model Performance
+The model was validated using a strict 3-way temporal split (Train/Val/Test) to ensure it generalizes well to future data.
+
+| Metric | Result (Unseen Data) |
+| :--- | :--- |
+| **MAE** | € 607.58 |
+| **MAPE** | **8.63%** |
+| **RMSPE** | 0.1191 |
+
+### Understanding the Metrics
+* **MAE (Mean Absolute Error)**: Represents the average forecasting error in Euros per prediction.
+* **MAPE (Mean Absolute Percentage Error)**: Shows the average error as a percentage of actual sales. At **8.63%**, it indicates a highly reliable baseline for retail operations.
+* **RMSPE (Root Mean Square Percentage Error)**: A standard industry metric that penalizes larger forecasting gaps more heavily, ensuring the model remains robust against extreme outliers.
+
+---
+
+## Tech Stack
+
+### Frontend & Visualization
+* **Streamlit**: Used to build the interactive web dashboard and handle the application state.
+* **Altair**: Powers the interactive charts, supporting zooming, panning, and customized tooltips.
+
+### Machine Learning & Data Science
+* **TensorFlow / Keras**: Used for architecting and training the Hybrid LSTM + Embedding model.
+* **Scikit-Learn**: Utilized for data preprocessing, including scaling (MinMaxScaler) and categorical encoding.
+* **Pandas & NumPy**: The core libraries for data manipulation and numerical operations.
+* **Joblib**: Handles the persistence of the data scalers to ensure consistency between training and inference.
+
+### Data & Infrastructure
+* **PostgreSQL**: The primary relational database for storing and querying sales records.
+* **SQLAlchemy**: Provides the connection bridge between the Python application and the database.
+* **Docker & Docker Compose**: Used to containerize the entire ecosystem, ensuring a consistent environment for the DB and the App.
 
 ---
 
@@ -56,5 +125,6 @@ To run the entire ecosystem (PostgreSQL Database + Streamlit Dashboard) locally,
 ```bash
 git clone https://github.com/DenisMal00/rossmann-forecast.git
 cd rossmann-forecast
+
 
 
