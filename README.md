@@ -1,7 +1,7 @@
 # Rossmann Strategic Dashboard
 ## Scalable Sales Forecasting & Strategy Simulator
 
-> **Quick Start:** Skip to [Installation & Setup](#-installation--setup).
+> **Quick Start:** Skip to [Installation & Setup](#installation).
 
 **Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.63% MAPE** on unseen data and simulate strategic scenarios in real-time.
 
@@ -116,7 +116,7 @@ The model was validated using a strict 3-way temporal split (Train/Val/Test) to 
 * **Docker & Docker Compose**: Used to containerize the entire ecosystem, ensuring a consistent environment for the DB and the App.
 
 ---
-
+<a name="installation"></a>
 ## Installation & Setup
 
 To run the entire ecosystem (PostgreSQL Database + Streamlit Dashboard) locally, ensure you have Docker installed.
@@ -148,5 +148,6 @@ docker-compose exec app python src/ingest_data.py
 ### 5. Access the Dashboard
 Once the ingestion is finished, open your web browser and navigate to the local address:
 **[http://localhost:8501/](http://localhost:8501/)**
+
 
 
