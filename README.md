@@ -117,14 +117,36 @@ The model was validated using a strict 3-way temporal split (Train/Val/Test) to 
 
 ---
 
-## 📦 Installation & Setup
+## Installation & Setup
 
 To run the entire ecosystem (PostgreSQL Database + Streamlit Dashboard) locally, ensure you have Docker installed.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/DenisMal00/rossmann-forecast.git
-cd rossmann-forecast
+### 1. Clone the Repository
 
+```bash
+git clone https://github.com/DenisMal00/rossmann-sales-engine.git
+cd rossmann-sales-engine
+```
+
+### 2. Data and Model Preparation
+* **Dataset**: Download `train.csv` and `store.csv` from the [Kaggle Rossmann Store Sales competition](https://www.kaggle.com/competitions/rossmann-store-sales/data).
+* **Storage**: Create a `data/` folder in the project root and place the two CSV files inside it.
+* **Pre-trained Models**: Ensure that the `sales_model.keras` and `scaler.joblib` files are present in the `models/` directory. These files allow you to skip the training phase and start generating forecasts immediately.
+
+### 3. Start the Infrastructure
+Build and launch the containerized environment (PostgreSQL + Python App):
+```bash
+docker-compose up -d --build
+```
+
+### 4. Database Ingestion
+Populate the PostgreSQL database with the raw sales records:
+```bash
+docker-compose exec app python src/ingest_data.py
+```
+
+### 5. Access the Dashboard
+Once the ingestion is finished, open your web browser and navigate to the local address:
+**[http://localhost:8501/](http://localhost:8501/)**
 
 
