@@ -54,5 +54,6 @@ To run the entire ecosystem (PostgreSQL Database + Streamlit Dashboard) locally,
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/your-username/rossmann-forecast.git](https://github.com/your-username/rossmann-forecast.git)
+git clone https://github.com/DenisMal00/rossmann-forecast.git
 cd rossmann-forecast
+
