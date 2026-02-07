@@ -5,7 +5,7 @@
 > * **Ready to go?** Skip to [Installation & Setup](#installation). The provided weights are already optimized (**8.55% MAPE**).
 > * **Want to experiment?** Jump to [Training & Customization](#training--customization) to play with the model or challenge the record.
 
-**Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.63% MAPE** on unseen data and simulate strategic scenarios in real-time.
+**Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.55% MAPE** on unseen data and simulate strategic scenarios in real-time.
 
 Designed as a functional **Strategy Simulator**, this dashboard bridges the gap between historical time-series data and daily operational decisions. It allows users to visualize the potential impact of promotions and seasonal shifts, providing a data-driven baseline before implementing changes in the physical store.
 
@@ -124,7 +124,7 @@ The model was validated using a strict 3-way temporal split (Train/Val/Test) to 
 
 ### Understanding the Metrics
 * **MAE (Mean Absolute Error)**: Represents the average forecasting error in Euros per prediction.
-* **MAPE (Mean Absolute Percentage Error)**: Shows the average error as a percentage of actual sales. At **8.63%**, it indicates a highly reliable baseline for retail operations.
+* **MAPE (Mean Absolute Percentage Error)**: Shows the average error as a percentage of actual sales. At **8.55%**, it indicates a highly reliable baseline for retail operations.
 * **RMSPE (Root Mean Square Percentage Error)**: A standard industry metric that penalizes larger forecasting gaps more heavily, ensuring the model remains robust against extreme outliers.
 
 ---
@@ -220,3 +220,4 @@ docker exec -it rossmann_app python src/pipeline.py
 ### 4. Model Promotion Logic
 * **Automatic Tracking**: Every new attempt is logged to the **MLflow UI** (`http://localhost:5001`). 
 * **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record (**8.55% MAPE**), the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
+
