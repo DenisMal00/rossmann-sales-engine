@@ -89,7 +89,6 @@ def execute_training_workflow(params, df, client):
         max_results=1
     )
 
-    # Step 1: Start with our hardcoded benchmark as the target to beat
     best_past_mape = CHAMPION_MAPE_BENCHMARK
 
     if runs:
