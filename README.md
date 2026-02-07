@@ -1,7 +1,9 @@
 # Rossmann Strategic Dashboard
 ## Scalable Sales Forecasting & Strategy Simulator
 
-> **Quick Start:** Skip to [Installation & Setup](#installation).
+> **Quick Start:**
+> * **Ready to go?** Skip to [Installation & Setup](#installation). The provided weights are already optimized (**8.55% MAPE**).
+> * **Want to experiment?** Jump to [Training & Customization](#training--customization) to play with the model or challenge the record.
 
 **Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.63% MAPE** on unseen data and simulate strategic scenarios in real-time.
 
@@ -180,7 +182,41 @@ docker-compose exec app python src/ingest_data.py
 Once the ingestion is finished, open your web browser and navigate to the local address:
 **[http://localhost:8501/](http://localhost:8501/)**
 
+---
+<a name="training--customization"></a>
+## Training & Customization
 
+The repository includes pre-trained weights in the `models/` directory, which represent the current **Champion Model** (8.55% MAPE) achieved with 58 LSTM units. You can use these to run the dashboard immediately. 
 
+However, if you want to experiment with different architectures or hyperparameter settings, the system is designed to be a flexible laboratory.
 
+### 1. Experimentation Workflow
+To test your own ideas, modify the `params` dictionary in `src/pipeline.py`:
+```python
+params = {
+    "window_size": 7,
+    "batch_size": 256,
+    "epochs": 50,
+    "lstm_units": 64  # Experiment with different widths
+}
+```
 
+### 2. Advanced Architectural Changes
+For those who want to go beyond hyperparameter tuning, you can directly modify the neural network structure in `src/model.py`:
+
+* **Adding Layers**: You can insert additional `LSTM` layers (remember `return_sequences=True` for intermediate layers) or more `Dense` layers to increase the model's depth.
+* **Regularization**: Adjust the `Dropout` rate or add `BatchNormalization` to prevent overfitting if you increase the model complexity. 
+* **Embedding Size**: Modify the `output_dim` in the `Embedding` layer to change how store identities are represented.
+
+After modifying the architecture, simply run the pipeline again. The **MLflow** integration will attempt to auto-log these changes, allowing you to track how structural modifications impact the MAPE.
+
+### 3. Run the Pipeline
+Execute the training and evaluation flow within the container:
+
+```bash
+docker exec -it rossmann_app python src/pipeline.py
+```
+
+### 4. Model Promotion Logic
+* **Automatic Tracking**: Every new attempt is logged to the **MLflow UI** (`http://localhost:5001`). 
+* **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record (**8.55% MAPE**), the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
