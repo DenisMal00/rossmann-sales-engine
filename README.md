@@ -2,7 +2,7 @@
 ## Scalable Sales Forecasting & Strategy Simulator
 
 > **Quick Start:**
-> * **Ready to go?** Skip to [Installation & Setup](#installation). The provided weights are already optimized (**8.55% MAPE**).
+> * **Ready to go?** Skip to [Installation & Setup](#installation). The provided weights are already optimized.
 > * **Want to experiment?** Jump to [Training & Customization](#training--customization) to play with the model or challenge the record.
 
 **Rossmann Strategic Dashboard** is a sales forecasting tool that transforms over **1.1 million historical records** into actionable business intelligence. By processing data from a massive network of **1,115 stores across Germany**, the system leverages a **Recursive LSTM** neural network to provide precise sales forecasts, achieving a solid **8.55% MAPE** on unseen data and simulate strategic scenarios in real-time.
@@ -24,7 +24,7 @@ The core of this project is built to handle significant data complexity:
 The system integrates **MLflow** to manage the model lifecycle with a "Champion vs Challenger" logic:
 
 * **Automated Tracking**: Logs hyperparameters (LSTM units, batch size), metrics, and artifacts for full reproducibility. 
-* **Smart Promotion**: Production model is updated only if a new run improves the historical **MAPE** (currently **8.55%**).
+* **Smart Promotion**: Production model is updated only if a new run improves the historical MAPE.
 * **Full Persistence**: Containerized architecture with **Docker Volumes** ensures that 1.1M records, training history, and model artifacts survive system reboots.
   
 ---
@@ -219,5 +219,6 @@ docker exec -it rossmann_app python src/pipeline.py
 
 ### 4. Model Promotion Logic
 * **Automatic Tracking**: Every new attempt is logged to the **MLflow UI** (`http://localhost:5001`). 
-* **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record (**8.55% MAPE**), the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
+* **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record, the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
+
 
