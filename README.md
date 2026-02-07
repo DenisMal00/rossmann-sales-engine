@@ -9,6 +9,15 @@ Designed as a functional **Strategy Simulator**, this dashboard bridges the gap 
 
 ---
 
+## The Power of Data at Scale
+The core of this project is built to handle significant data complexity:
+
+* **Efficient Learning**: The model was trained on a high-granularity dataset, capturing essential sales patterns, holiday effects, and regional dynamics.
+* **Store-Specific Logic**: The system accounts for the unique identity of every store, considering its competitive landscape and assortment strategy.
+* **Practical Business Value**: In retail, even small forecasting errors can lead to inventory issues. This tool helps mitigate uncertainty by modeling recurring seasonal patterns and periodic market fluctuations.
+  
+---
+
 ## MLOps & Persistence
 The system integrates **MLflow** to manage the model lifecycle with a "Champion vs Challenger" logic:
 
@@ -18,16 +27,11 @@ The system integrates **MLflow** to manage the model lifecycle with a "Champion 
   
 ---
 
-## The Power of Data at Scale
-The core of this project is built to handle significant data complexity:
-
-* **Efficient Learning**: The model was trained on a high-granularity dataset, capturing essential sales patterns, holiday effects, and regional dynamics.
-* **Store-Specific Logic**: The system accounts for the unique identity of every store, considering its competitive landscape and assortment strategy.
-* **Practical Business Value**: In retail, even small forecasting errors can lead to inventory issues. This tool helps mitigate uncertainty by modeling recurring seasonal patterns and periodic market fluctuations.
----
-
 ## Dashboard Overview
 The interface is designed for immediate operational clarity, splitting global controls from interactive data visualization.
+
+**Access**: Open your browser and navigate to **[http://localhost:8501/](http://localhost:8501/)**
+
 
 ![Dashboard Main](assets/dashboard_main.png)
 
@@ -66,6 +70,19 @@ This section shows how a promotion changes the forecast by comparing a **Standar
 * **Net Gain**: Calculates the total "extra" sales generated specifically by the promotion.
 * **Daily Delta**: A table showing the day-by-day difference between the two forecasts, highlighting exactly when the strategy is most effective.
   
+---
+
+### MLflow UI Dashboard
+You can monitor all training sessions, compare model architectures, and inspect performance metrics in real-time through the MLflow interface.
+
+**Access**: Open your browser and navigate to **[http://localhost:5001/](http://localhost:5001/)**
+
+![MLflow dashboard](assets/mlflow_dash.png)
+
+* **Performance Analysis**: Visualize training vs. validation loss curves and compare the **test_mape** across different runs (e.g., comparing 50 vs 64 LSTM units).
+* **Artifact Inspection**: Access the "Model" folder for any specific run to see the saved `saved_model.pb`, the `scaler.joblib`, and the environment configuration files.
+  
+
 ---
 
 ## Engineering & Design Choices
@@ -162,6 +179,7 @@ docker-compose exec app python src/ingest_data.py
 ### 5. Access the Dashboard
 Once the ingestion is finished, open your web browser and navigate to the local address:
 **[http://localhost:8501/](http://localhost:8501/)**
+
 
 
 
