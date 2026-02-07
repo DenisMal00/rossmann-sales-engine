@@ -9,6 +9,15 @@ Designed as a functional **Strategy Simulator**, this dashboard bridges the gap 
 
 ---
 
+## MLOps & Persistence
+The system integrates **MLflow** to manage the model lifecycle with a "Champion vs Challenger" logic:
+
+* **Automated Tracking**: Logs hyperparameters (LSTM units, batch size), metrics, and artifacts for full reproducibility. 
+* **Smart Promotion**: Production model is updated only if a new run improves the historical **MAPE** (currently **8.55%**).
+* **Full Persistence**: Containerized architecture with **Docker Volumes** ensures that 1.1M records, training history, and model artifacts survive system reboots.
+  
+---
+
 ## The Power of Data at Scale
 The core of this project is built to handle significant data complexity:
 
@@ -70,16 +79,19 @@ The forecasting engine uses a multi-input Deep Learning model designed to captur
 * **Target Transformation**: Sales data is processed using a **Log Transformation** ($\log(1+x)$) to normalize variance and improve model stability.
 
 ### 2. Data Engineering & MLOps
-The system is built for reproducibility and efficiency:
-* **SQL-Side Preprocessing**: Critical features like the **7-day rolling average** are calculated directly within PostgreSQL using **Window Functions**, drastically reducing the memory footprint on the application side.
-* **Inference Strategy**: The dashboard performs **Recursive Multi-Step Forecasting**, where each day's prediction is used as an input feature for the next day, ensuring continuity throughout the 7-day window.
+The system is built for industrial reproducibility and continuous improvement:
+* **SQL-Side Preprocessing**: Critical features like the **7-day rolling average** are calculated directly within PostgreSQL using **Window Functions**, reducing memory footprint on the application side.
+* **Automated MLOps Pipeline**: Integrated **MLflow** for experiment tracking. Every training run logs hyperparameters (LSTM units, dropout, batch size) and metrics (MAE, MAPE, RMSPE) to a persistent database.
+* **Champion vs Challenger Logic**: A dedicated promotion script automatically queries the MLflow tracking server to compare the current model's performance against the historical best. The production assets are updated only if a new record is established.
+* **Inference Strategy**: The dashboard performs **Recursive Multi-Step Forecasting**, where each day's prediction is used as an input feature for the next day. 
 
-### 3. Containerized Ecosystem
-The entire solution is orchestrated via **Docker**, ensuring that the environment is consistent across development and production:
-* **Database Container (`db`)**: A PostgreSQL instance that persists over 1.1 million records and provides high-speed data retrieval.
-* **Application Container (`app`)**: A Python-based environment hosting the Streamlit dashboard and the TensorFlow inference engine.
-* **Network Isolation**: Both containers communicate over a private bridge, keeping the database secure and inaccessible from outside the local network.
-
+### 3. Containerized & Persistent Ecosystem
+The entire solution is orchestrated via **Docker**, ensuring consistency across development and production environments with total data persistence:
+* **MLflow Stack (`mlflow_server` & `mlflow_db`)**: A dedicated tracking server and its own PostgreSQL backend to store every experiment's metadata and historical history.
+* **Data Layer (`db`)**: A PostgreSQL instance that persists over 1.1 million records via **Docker Named Volumes**, ensuring data survival across container restarts.
+* **Application Layer (`app`)**: A Python-based environment hosting the Streamlit dashboard and the TensorFlow inference engine.
+* **Network Isolation**: All containers communicate over a private bridge, keeping the data layer secure while allowing the app to interact with MLflow.
+  
 ---
 
 ## Model Performance
@@ -87,9 +99,9 @@ The model was validated using a strict 3-way temporal split (Train/Val/Test) to 
 
 | Metric | Result (Unseen Data) |
 | :--- | :--- |
-| **MAE** | € 607.58 |
-| **MAPE** | **8.63%** |
-| **RMSPE** | 0.1191 |
+| **MAE** | € 601.95 |
+| **MAPE** | **8.55%** |
+| **RMSPE** | 0.1180 |
 
 ### Understanding the Metrics
 * **MAE (Mean Absolute Error)**: Represents the average forecasting error in Euros per prediction.
@@ -101,20 +113,22 @@ The model was validated using a strict 3-way temporal split (Train/Val/Test) to 
 ## Tech Stack
 
 ### Frontend & Visualization
-* **Streamlit**: Used to build the interactive web dashboard and handle the application state.
-* **Altair**: Powers the interactive charts, supporting zooming, panning, and customized tooltips.
+* **Streamlit**: Powers the interactive web dashboard and application state management.
+* **Altair**: Handles interactive visualizations, supporting zooming, panning, and custom tooltips.
 
 ### Machine Learning & Data Science
-* **TensorFlow / Keras**: Used for architecting and training the Hybrid LSTM + Embedding model.
+* **TensorFlow / Keras**: Used for architecting the Hybrid LSTM + Embedding neural network.
+* **MLflow**: Centralized platform for experiment tracking, parameter logging, and model versioning.
 * **Scikit-Learn**: Utilized for data preprocessing, including scaling (MinMaxScaler) and categorical encoding.
-* **Pandas & NumPy**: The core libraries for data manipulation and numerical operations.
-* **Joblib**: Handles the persistence of the data scalers to ensure consistency between training and inference.
+* **Pandas & NumPy**: Core libraries for data manipulation and numerical operations.
+* **Joblib**: Manages the persistence of data scalers to ensure consistency between training and inference.
 
 ### Data & Infrastructure
-* **PostgreSQL**: The primary relational database for storing and querying sales records.
-* **SQLAlchemy**: Provides the connection bridge between the Python application and the database.
-* **Docker & Docker Compose**: Used to containerize the entire ecosystem, ensuring a consistent environment for the DB and the App.
-
+* **PostgreSQL**: Dual-instance setup for storing 1.1M sales records and MLflow metadata.
+* **SQLAlchemy**: The ORM bridge between Python and the PostgreSQL databases.
+* **Docker & Docker Compose**: Orchestrates the multi-container environment (App, DB, MLflow Server, and MLflow DB).
+* **Docker Volumes**: Ensures full data persistence for all databases and model artifacts across sessions.
+  
 ---
 <a name="installation"></a>
 ## Installation & Setup
@@ -148,6 +162,7 @@ docker-compose exec app python src/ingest_data.py
 ### 5. Access the Dashboard
 Once the ingestion is finished, open your web browser and navigate to the local address:
 **[http://localhost:8501/](http://localhost:8501/)**
+
 
 
 
