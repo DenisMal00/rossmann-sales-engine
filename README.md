@@ -74,7 +74,7 @@ This section shows how a promotion changes the forecast by comparing a **Standar
   
 ---
 
-### MLflow UI Dashboard
+## MLflow UI Dashboard
 You can monitor all training sessions, compare model architectures, and inspect performance metrics in real-time through the MLflow interface.
 
 **Access**: Open your browser and navigate to **[http://localhost:5001/](http://localhost:5001/)**
@@ -220,5 +220,6 @@ docker exec -it rossmann_app python src/pipeline.py
 ### 4. Model Promotion Logic
 * **Automatic Tracking**: Every new attempt is logged to the **MLflow UI** (`http://localhost:5001`). 
 * **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record, the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
+
 
 
