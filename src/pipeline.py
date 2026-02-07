@@ -106,7 +106,7 @@ def execute_training_workflow(params, df, client):
         is_new_best = True
         print(f"Congratulations! New record: {mape:.4f} (Previous best: {best_past_mape:.4f})")
     else:
-        print(f"Current MAPE {mape:.4f} vs Best {best_past_mape:.4f}. Promotion denied.")
+        print(f"Current MAPE {mape:.4f} vs Best {best_past_mape:.4f}. Not updating the weights in /models.")
 
     mlflow.log_metric("test_mape", mape)
     mlflow.log_metric("test_mae", mae)
