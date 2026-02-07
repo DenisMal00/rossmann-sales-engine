@@ -8,7 +8,7 @@ def build_lstm_model(input_shape, units, num_stores=1116):
     # Time series branch
     ts_input = Input(shape=input_shape, name='ts_input')
     x_ts = LSTM(units=units, return_sequences=False)(ts_input)
-    x_ts = Dropout(0.25)(x_ts)
+    x_ts = Dropout(0.15)(x_ts)
 
     # Store ID branch (Embedding)
     store_input = Input(shape=(1,), name='store_input')
