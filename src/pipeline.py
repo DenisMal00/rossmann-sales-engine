@@ -12,6 +12,8 @@ import warnings
 from mlflow.tracking import MlflowClient
 from datetime import datetime
 
+CHAMPION_MAPE_BENCHMARK = 0.0855
+
 # Silence system logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -87,14 +89,25 @@ def execute_training_workflow(params, df, client):
         max_results=1
     )
 
-    is_new_best = True
+    # Step 1: Start with our hardcoded benchmark as the target to beat
+    best_past_mape = CHAMPION_MAPE_BENCHMARK
+
     if runs:
-        best_past_mape = runs[0].data.metrics.get("test_mape")
-        if mape >= best_past_mape:
-            is_new_best = False
-            print(f"Current MAPE {mape:.4f} vs Best {best_past_mape:.4f}")
+        mlflow_best_mape = runs[0].data.metrics.get("test_mape")
+        if mlflow_best_mape < CHAMPION_MAPE_BENCHMARK:
+            best_past_mape = mlflow_best_mape
+            print(f"MLflow record found: {best_past_mape:.4f}")
         else:
-            print(f"New record! Best MAPE: {mape:.4f}")
+            print(f"MLflow records found but none beat the 8.55% benchmark.")
+    else:
+        print(f"No previous runs in MLflow. Using 8.55% benchmark.")
+
+    is_new_best = False
+    if mape < best_past_mape:
+        is_new_best = True
+        print(f"Congratulations! New record: {mape:.4f} (Previous best: {best_past_mape:.4f})")
+    else:
+        print(f"Current MAPE {mape:.4f} vs Best {best_past_mape:.4f}. Promotion denied.")
 
     mlflow.log_metric("test_mape", mape)
     mlflow.log_metric("test_mae", mae)
