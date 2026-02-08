@@ -5,6 +5,7 @@ def build_lstm_model(input_shape, units, num_stores=1116):
     """
     Multi-input model: LSTM for time series trends and Entity Embeddings for store identity.
     """
+
     # Time series branch
     ts_input = Input(shape=input_shape, name='ts_input')
     x_ts = LSTM(units=units, return_sequences=False)(ts_input)
