@@ -1,3 +1,4 @@
+![Python CI](https://github.com/DenisMal00/rossmann-sales-engine/actions/workflows/ci.yml/badge.svg)
 # Rossmann Strategic Dashboard
 ## Scalable Sales Forecasting & Strategy Simulator
 
@@ -220,6 +221,7 @@ docker exec -it rossmann_app python src/pipeline.py
 ### 4. Model Promotion Logic
 * **Automatic Tracking**: Every new attempt is logged to the **MLflow UI** (`http://localhost:5001`, select the experiment: **Rossmann_Sales_Forecasting**). 
 * **Seamless Update**: The system automatically compares the new results. If your experiment beats the current record, the files in `models/` are overwritten with your new "Champion", and the dashboard updates accordingly.
+
 
 
 
